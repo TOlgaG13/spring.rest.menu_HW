@@ -70,26 +70,17 @@ public class MenuController {
 
     @PostMapping("/order/add/{id}")
     public String addDishToOrder(@PathVariable Long id) {
-        Dishes dish = dishesService.getDishesByPrice(0, Double.MAX_VALUE, 0, Integer.MAX_VALUE)
-                .getContent()
-                .stream()
-                .filter(d -> d.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        Dishes dish = dishesService.getDishById(id);
 
         if (dish != null) {
             orderDishesService.addDishToOrder(dish);
         }
         return "redirect:/";
     }
+
     @PostMapping("/order/remove/{id}")
     public String removeDishFromOrder(@PathVariable Long id) {
-        Dishes dish = dishesService.getDishesByPrice(0, Double.MAX_VALUE, 0, Integer.MAX_VALUE)
-                .getContent()
-                .stream()
-                .filter(d -> d.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        Dishes dish = dishesService.getDishById(id); // Отримуємо страву за ID
 
         if (dish != null) {
             orderDishesService.removeDishFromOrder(dish);

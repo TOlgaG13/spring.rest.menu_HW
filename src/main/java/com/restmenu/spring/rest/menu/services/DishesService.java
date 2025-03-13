@@ -20,6 +20,11 @@ public class DishesService {
     public void addDish(Dishes dish) {
         dishesRepository.save(dish);
     }
+    @Transactional(readOnly = true)
+    public Dishes getDishById(Long id) {
+        return dishesRepository.findById(id).orElse(null);
+    }
+
 
     @Transactional(readOnly = true)
     public Page<Dishes> getDishesByPrice(double minPrice, double maxPrice, int page, int size) {

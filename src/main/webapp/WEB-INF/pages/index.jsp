@@ -27,24 +27,59 @@
         <th>Discount</th>
         <th>Actions</th>
     </tr>
-    <c:forEach var="dish" items="${dishes}">
-        <tr>
-            <td>${dish.name}</td>
-            <td>${dish.price}</td>
-            <td>${dish.weight} г</td>
-            <td>${dish.discount ? 'Yes' : 'No'}</td>
-            <td>
-                <form action="/order/add/${dish.id}" method="post">
-                    <button type="submit">Add to order</button>
-                </form>
-            </td>
-        </tr>
-    </c:forEach>
-</table>
-<h2>Dishes with a total weight of no more than 1 kg</h2>
 
+    <c:choose>
+        <c:when test="${not empty dishes}">
+            <c:forEach var="dish" items="${dishes}">
+                <tr>
+                    <td>${dish.name}</td>
+                    <td>${dish.price}</td>
+                    <td>${dish.weight} г</td>
+                    <td>${dish.discount ? 'Yes' : 'No'}</td>
+                    <td>
+                        <form action="/order/add/${dish.id}" method="post">
+                            <button type="submit">Add to order</button>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
+        </c:when>
+        <c:otherwise>
+            <c:forEach var="dish" items="${dishesPage.content}">
+                <tr>
+                    <td>${dish.name}</td>
+                    <td>${dish.price}</td>
+                    <td>${dish.weight} г</td>
+                    <td>${dish.discount ? 'Yes' : 'No'}</td>
+                    <td>
+                        <form action="/order/add/${dish.id}" method="post">
+                            <button type="submit">Add to order</button>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
+        </c:otherwise>
+    </c:choose>
+
+</table>
+
+<h2>Dishes with a total weight of no more than 1 kg</h2>
 <a href="/dishes/under-1kg">View light dishes</a>
+<br>
 <a href="/orders">View orders</a>
+
+<c:if test="${dishesPage.totalPages > 1}">
+    <div>
+        <c:if test="${dishesPage.number > 0}">
+            <a href="/?page=${dishesPage.number - 1}">Previous</a>
+        </c:if>
+        Page ${dishesPage.number + 1} of ${dishesPage.totalPages}
+        <c:if test="${dishesPage.number + 1 < dishesPage.totalPages}">
+            <a href="/?page=${dishesPage.number + 1}">Next</a>
+        </c:if>
+    </div>
+</c:if>
 
 </body>
 </html>
+

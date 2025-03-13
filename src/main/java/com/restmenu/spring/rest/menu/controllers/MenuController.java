@@ -80,7 +80,7 @@ public class MenuController {
 
     @PostMapping("/order/remove/{id}")
     public String removeDishFromOrder(@PathVariable Long id) {
-        Dishes dish = dishesService.getDishById(id); // Отримуємо страву за ID
+        Dishes dish = dishesService.getDishById(id);
 
         if (dish != null) {
             orderDishesService.removeDishFromOrder(dish);

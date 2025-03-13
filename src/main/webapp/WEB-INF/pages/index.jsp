@@ -18,6 +18,9 @@
 <form action="/dish/discount" method="get">
     <button type="submit">Show discounted dishes</button>
 </form>
+<form action="/reset" method="get">
+    <button type="submit">Reset Dishes</button>
+</form>
 
 <table border="1">
     <tr>

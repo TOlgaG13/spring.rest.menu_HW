@@ -102,6 +102,11 @@ public class MenuController {
         model.addAttribute("orders", orders);
         return "orders";
     }
+    @GetMapping("/reset")
+    public String resetDishes() {
+        dishesService.reset();
+        return "redirect:/";
+    }
 
     }
 

@@ -44,6 +44,20 @@ public class DishesService {
         Pageable pageable = PageRequest.of(page, size);
         return dishesRepository.findAll(pageable);
     }
+    @Transactional
+    public void reset() {
+        dishesRepository.deleteAll();
+
+        for (int i = 1; i <= 5; i++) {
+            Dishes dish = new Dishes("Dish Name " + i, i * 10.0, i * 100, i % 2 == 0);
+            this.addDish(dish);
+        }
+
+        for (int i = 6; i <= 10; i++) {
+            Dishes dish = new Dishes("Dish Name " + i, i * 12.0, i * 80, false);
+            this.addDish(dish);
+        }
+    }
 
     }
 

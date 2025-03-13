@@ -2,6 +2,8 @@ package com.restmenu.spring.rest.menu.models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 
 @Entity
 @Table(name="menu1")
@@ -9,17 +11,16 @@ public class Dishes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable=false)
+
     private String name;
-    @Column(nullable=false)
     private double price;
-    @Column(nullable=false)
     private double weight;
-    @Column(nullable=false)
     private boolean discount;
 
-    public Dishes() {
-    }
+    @OneToMany(mappedBy = "dishes", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDishes> orderDishesList;
+
+    public Dishes() {}
 
     public Dishes(String name, double price, double weight, boolean discount) {
         this.name = name;
@@ -32,24 +33,12 @@ public class Dishes {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getName() {
+        return name;
     }
 
-    public boolean isDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(boolean discount) {
-        this.discount = discount;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getPrice() {
@@ -60,23 +49,29 @@ public class Dishes {
         this.price = price;
     }
 
-    public String getName() {
-        return name;
+    public double getWeight() {
+        return weight;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
-    @Override
-    public String toString() {
-        return "Dishes{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", weight=" + weight +
-                ", discount=" + discount +
-                '}';
+    public boolean isDiscount() {
+        return discount;
     }
+
+    public void setDiscount(boolean discount) {
+        this.discount = discount;
+    }
+
+    public List<OrderDishes> getOrderDishesList() {
+        return orderDishesList;
+    }
+
+    public void setOrderDishesList(List<OrderDishes> orderDishesList) {
+        this.orderDishesList = orderDishesList;
+    }
+
 }
 

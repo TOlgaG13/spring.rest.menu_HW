@@ -1,56 +1,96 @@
 package com.restmenu.spring.rest.menu.controllers;
 
 import com.restmenu.spring.rest.menu.models.Dishes;
+import com.restmenu.spring.rest.menu.models.OrderDishes;
 import com.restmenu.spring.rest.menu.services.DishesService;
-import org.springframework.http.ResponseEntity;
+import com.restmenu.spring.rest.menu.services.OrderDishesService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@Controller
-@RequestMapping("/dishes")
-public class MenuController {
-    private final DishesService service;
 
-    public MenuController(DishesService service) {
-        this.service = service;
+@Controller
+
+public class MenuController {
+    static final int ITEMS_PER_PAGE = 6;
+    private final DishesService dishesService;
+    private final OrderDishesService orderDishesService;
+
+    public MenuController(DishesService dishesService, OrderDishesService orderDishesService) {
+        this.dishesService = dishesService;
+        this.orderDishesService = orderDishesService;
     }
-    @GetMapping("/add")
-    public String showAddDishPage() {
-        return "add_dish";
+    @GetMapping("/")
+    public String index(Model model, @RequestParam(required = false, defaultValue = "0") Integer page) {
+        if (page < 0) page = 0;
+
+        List<Dishes> dishes = dishesService.getDishesByPrice(0, Double.MAX_VALUE);
+
+        model.addAttribute("dishes", dishes);
+        model.addAttribute("allPages", getPageCount());
+
+        return "index";
     }
-    @PostMapping("/save")
-    public String createDish(@ModelAttribute Dishes dish) {
-        service.saveDishes(dish);
-        return "redirect:/dishes/list";
+    @GetMapping("/dish/add")
+    public String showAddDishPage(Model model) {
+        model.addAttribute("dish", new Dishes());
+        return "add-dish";
     }
-    @GetMapping("/list")
-    public String showAllDishesPage(Model model) {
-        List<Dishes> dishes = service.getAllDishes();
+    @PostMapping("/dish/add")
+    public String addDish(@ModelAttribute Dishes dish) {
+        dishesService.addDish(dish);
+        return "redirect:/";
+    }
+    @GetMapping("/dish/filter-price")
+    public String filterByPrice(@RequestParam double minPrice, @RequestParam double maxPrice, Model model) {
+        model.addAttribute("dishes", dishesService.getDishesByPrice(minPrice, maxPrice));
+        return "index";
+    }
+    @GetMapping("/dishes/under-1kg")
+    public String getDishesUnder1Kg(Model model) {
+        List<Dishes> dishes = dishesService.getDishesUnderWeight(1000);
         model.addAttribute("dishes", dishes);
         return "index";
     }
-    @GetMapping("/api/all")
-    @ResponseBody
-    public ResponseEntity<List<Dishes>> getAllDishes() {
-        return ResponseEntity.ok(service.getAllDishes());
+    @GetMapping("/dish/discount")
+    public String filterByDiscount(Model model) {
+        model.addAttribute("dishes", dishesService.getDishesWithDiscount());
+        return "index";
     }
-    @GetMapping("/api/price")
-    @ResponseBody
-    public ResponseEntity<List<Dishes>> getDishesByPrice(@RequestParam double minPrice, @RequestParam double maxPrice) {
-        return ResponseEntity.ok(service.getDishesByPriceRange(minPrice, maxPrice));
+    @PostMapping("/order/add/{id}")
+    public String addDishToOrder(@PathVariable Long id) {
+        Dishes dish = dishesService.getDishesByPrice(0, Double.MAX_VALUE)
+                .stream()
+                .filter(d -> d.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+        if (dish != null) {
+            orderDishesService.addDishToOrder(dish);
+        }
+        return "redirect:/";
     }
-    @GetMapping("/api/discount")
-    @ResponseBody
-    public ResponseEntity<List<Dishes>> getDishesWithDiscount() {
-        return ResponseEntity.ok(service.getDishesWithDiscount());
+    @PostMapping("/order/remove/{id}")
+    public String removeDishFromOrder(@PathVariable Long id) {
+        Dishes dish = dishesService.getDishesByPrice(0, Double.MAX_VALUE)
+                .stream()
+                .filter(d -> d.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+        if (dish != null) {
+            orderDishesService.removeDishFromOrder(dish);
+        }
+        return "redirect:/orders";
     }
-    @GetMapping("/filter")
-    public String filterDishes(@RequestParam double minPrice, @RequestParam double maxPrice, Model model) {
-        List<Dishes> dishes = service.getDishesByPriceRange(minPrice, maxPrice);
-        model.addAttribute("dishes", dishes);
-        return "filteredDishes";
+    @GetMapping("/orders")
+    public String showOrders(Model model) {
+        List<OrderDishes> orders = orderDishesService.getAllOrders();
+        model.addAttribute("orders", orders);
+        return "orders"; // JSP-сторінка orders.jsp
     }
+    private long getPageCount() {
+        long totalCount = dishesService.getDishesByPrice(0, Double.MAX_VALUE).size();
+        return (totalCount / ITEMS_PER_PAGE) + ((totalCount % ITEMS_PER_PAGE > 0) ? 1 : 0);
     }
+}
 

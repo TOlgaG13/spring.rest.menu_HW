@@ -1,43 +1,50 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
 <html>
 <head>
-    <title>List Dishes</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Main page</title>
 </head>
 <body>
-<h1>Menu</h1>
+<h1>Menu dishes</h1>
+
+<a href="/dish/add">Add dish</a>
+
+<form action="/dish/filter-price" method="get">
+    <label>Price from: <input type="number" step="0.01" name="minPrice"></label>
+    <label>to: <input type="number" step="0.01" name="maxPrice"></label>
+    <button type="submit">Filter</button>
+</form>
+
+<form action="/dish/discount" method="get">
+    <button type="submit">Show discounted dishes</button>
+</form>
+
 <table border="1">
     <tr>
         <th>Name</th>
         <th>Price</th>
         <th>Weight</th>
         <th>Discount</th>
+        <th>Actions</th>
     </tr>
     <c:forEach var="dish" items="${dishes}">
         <tr>
             <td>${dish.name}</td>
             <td>${dish.price}</td>
             <td>${dish.weight} г</td>
-            <td>${dish.discount ? "Yes" : "No"}</td>
+            <td>${dish.discount ? 'Yes' : 'No'}</td>
+            <td>
+                <form action="/order/add/${dish.id}" method="post">
+                    <button type="submit">Add to order</button>
+                </form>
+            </td>
         </tr>
     </c:forEach>
 </table>
+<h2>Dishes with a total weight of no more than 1 kg</h2>
 
-<h2>Add Dishes</h2>
-<form action="/dishes/save" method="post">
-    <label>Name:</label> <input type="text" name="name" required><br>
-    <label>Price:</label> <input type="number" name="price" step="0.01" required><br>
-    <label>Weight (g):</label> <input type="number" name="weight" required><br>
-    <label>Discount:</label> <input type="checkbox" name="discount"><br>
-    <button type="submit">Add</button>
-</form>
+<a href="/dishes/under-1kg">View light dishes</a>
+<a href="/orders">View orders</a>
 
 </body>
-</html><h2>Filter by price</h2>
-<form action="/dishes/filter" method="get">
-    <label>Min.price:</label> <input type="number" name="minPrice" required>
-    <label>Max.price:</label> <input type="number" name="maxPrice" required>
-    <button type="submit">Filter</button>
-</form>
+</html>

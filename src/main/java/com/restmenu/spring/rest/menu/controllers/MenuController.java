@@ -86,7 +86,7 @@ public class MenuController {
     public String showOrders(Model model) {
         List<OrderDishes> orders = orderDishesService.getAllOrders();
         model.addAttribute("orders", orders);
-        return "orders"; // JSP-сторінка orders.jsp
+        return "orders";
     }
     private long getPageCount() {
         long totalCount = dishesService.getDishesByPrice(0, Double.MAX_VALUE).size();

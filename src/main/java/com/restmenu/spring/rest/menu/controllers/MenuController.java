@@ -55,7 +55,7 @@ public class MenuController {
     public String getDishesUnder1Kg(Model model) {
         List<Dishes> dishes = dishesService.getDishesUnderWeight(1000);
         model.addAttribute("dishes", dishes);
-        model.addAttribute("dishesPage", null); // Видаляємо пагінацію
+        model.addAttribute("dishesPage", null);
         return "index";
     }
 
@@ -63,7 +63,7 @@ public class MenuController {
     public String filterByDiscount(Model model, @RequestParam(defaultValue = "0") int page) {
         int pageSize = ITEMS_PER_PAGE;
         Page<Dishes> dishesPage = dishesService.getDishesWithDiscount(page, pageSize);
-        model.addAttribute("dishesPage", dishesPage); // було "dishes"
+        model.addAttribute("dishesPage", dishesPage);
         return "index";
     }
 
@@ -71,7 +71,7 @@ public class MenuController {
     @PostMapping("/order/add/{id}")
     public String addDishToOrder(@PathVariable Long id) {
         Dishes dish = dishesService.getDishesByPrice(0, Double.MAX_VALUE, 0, Integer.MAX_VALUE)
-                .getContent() // Конвертація Page<Dishes> у List<Dishes>
+                .getContent()
                 .stream()
                 .filter(d -> d.getId().equals(id))
                 .findFirst()
@@ -85,7 +85,7 @@ public class MenuController {
     @PostMapping("/order/remove/{id}")
     public String removeDishFromOrder(@PathVariable Long id) {
         Dishes dish = dishesService.getDishesByPrice(0, Double.MAX_VALUE, 0, Integer.MAX_VALUE)
-                .getContent() // Конвертація Page<Dishes> у List<Dishes>
+                .getContent()
                 .stream()
                 .filter(d -> d.getId().equals(id))
                 .findFirst()

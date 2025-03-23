@@ -1,6 +1,8 @@
 package com.restmenu.spring.rest.menu.models;
 
+
 import jakarta.persistence.*;
+
 
 @Entity
 @Table(name="order_dishes")
@@ -31,7 +33,7 @@ public class OrderDishes {
         this.dishes = dishes;
     }
 
-    }
+}
 
 
 
